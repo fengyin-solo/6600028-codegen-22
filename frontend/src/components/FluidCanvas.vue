@@ -98,7 +98,46 @@ function draw() {
   ctx.fillRect(W - 120, 30, 115, 22)
   ctx.fillStyle = '#94a3b8'
   ctx.font = '11px monospace'
-  ctx.fillText(`Frame: ${store.frameCount}`, W - 114, 44)
+  const displayFrame = store.replayIndex !== -1 ? store.replayIndex : store.frameCount
+  ctx.fillText(`Frame: ${displayFrame}`, W - 114, 44)
+
+  // Replay indicator
+  if (store.isReversing) {
+    ctx.fillStyle = 'rgba(168, 85, 247, 0.9)'
+    ctx.fillRect(5, 5, 120, 28)
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 12px sans-serif'
+    ctx.fillText('⏮ 倒放中...', 12, 24)
+  } else if (store.replayIndex !== -1 && !store.isRunning) {
+    ctx.fillStyle = 'rgba(100, 116, 139, 0.8)'
+    ctx.fillRect(5, 5, 140, 28)
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 12px sans-serif'
+    ctx.fillText('⏸ 回放模式', 12, 24)
+  }
+
+  // Playback progress bar
+  if (store.historyCount > 1 && !store.isRunning) {
+    const barWidth = 200
+    const barHeight = 6
+    const barX = W / 2 - barWidth / 2
+    const barY = H - 20
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fillRect(barX - 2, barY - 2, barWidth + 4, barHeight + 4)
+    
+    ctx.fillStyle = '#334155'
+    ctx.fillRect(barX, barY, barWidth, barHeight)
+    
+    const progress = (displayFrame - store.historyStartFrame) / (store.historyEndFrame - store.historyStartFrame)
+    ctx.fillStyle = '#a855f7'
+    ctx.fillRect(barX, barY, barWidth * Math.max(0, Math.min(1, progress)), barHeight)
+    
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath()
+    ctx.arc(barX + barWidth * Math.max(0, Math.min(1, progress)), barY + barHeight / 2, 5, 0, Math.PI * 2)
+    ctx.fill()
+  }
 }
 
 let raf: number | null = null

@@ -29,3 +29,8 @@ export interface Preset {
   particleCount: number;
   initialConfig: 'dam' | 'drop' | 'fountain' | 'wave';
 }
+
+export interface FrameState {
+  particles: Particle[];
+  frameIndex: number;
+}

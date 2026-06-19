@@ -89,7 +89,7 @@ export class SPHEngine {
   }
 
   initParticles(config: 'dam' | 'drop' | 'fountain' | 'wave', count?: number) {
-    const n = count ?? this.particles.length || 800
+    const n = count ?? (this.particles.length || 800)
     this.particles = []
 
     switch (config) {
@@ -324,5 +324,13 @@ export class SPHEngine {
         p.vy += (dy / dist) * factor
       }
     }
+  }
+
+  saveState(): Particle[] {
+    return this.particles.map(p => ({ ...p }))
+  }
+
+  restoreState(particles: Particle[]) {
+    this.particles = particles.map(p => ({ ...p }))
   }
 }
